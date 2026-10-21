@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cardápio da Escola - Sabores da Escola</title>
+<style>
+  :root {
+    /* Cores em tom de rosa bebê e vermelho confortável (acolhedor e harmonioso) */
+    --cor-fundo: #fdf2f4;           /* Rosa bebê bem clarinho, descanso visual */
+    --cor-principal: #b92d3b;       /* Vermelho confortável, elegante e acolhedor */
+    --cor-principal-hover: #961d28; /* Vermelho mais escuro para hover */
+    --cor-header-bg: #fbe6e9;       /* Fundo suave do cabeçalho */
+    --cor-destaque: #d97706;        /* Toque quente acolhedor para botões secundários */
+    --cor-destaque-hover: #b45309;
+    --cor-card: #ffffff;            /* Card branco limpo */
+    --cor-texto: #1e293b;           /* Texto escuro suave para fácil leitura */
+    --cor-texto-suave: #475569;     /* Texto secundário */
+    
+    /* Badges e alertas em tons calmos */
+    --cor-alerta-bg: #fee2e2;
+    --cor-alerta-txt: #991b1b;
+    --cor-veggie-bg: #dcfce7;
+    --cor-veggie-txt: #166534;
+    --cor-badge-vermelha-bg: #fce3e7;
+    --cor-badge-vermelha-txt: #961d28;
+    
+    --sombra: 0 4px 20px rgba(30, 41, 59, 0.07);
+    --raio: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    line-height: 1.5;
+    font-size: 16px;
+    padding: 16px 12px 40px 12px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* HEADER ESTILO APP DELIVERY ACOLHEDOR */
+  header {
+    background: var(--cor-card);
+    padding: 20px;
+    border-radius: var(--raio);
+    box-shadow: var(--sombra);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border: 1px solid #f4d3d9;
+  }
+
+  .header-banner {
+    background: linear-gradient(135deg, #b92d3b 0%, #801b24 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    font-size: 30px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px 12px;
+    border-radius: 12px;
+    backdrop-filter: blur(4px);
+  }
+
+  .logo-titulo {
+    font-size: 22px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+  }
+
+  .badge-escola {
+    font-size: 13px;
+    color: #fce8eb;
+    opacity: 0.9;
+  }
+
+  .status-badge {
+    background: #dcfce7;
+    color: #166534;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  /* BARRA DE FILTROS POR HORÁRIO */
+  .filtros-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .filtros-scroll::-webkit-scrollbar { display: none; }
+
+  .chip-filtro {
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1.5px solid #cbd5e1;
+    background: #f8fafc;
+    color: var(--cor-texto);
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+  }
+
+  .chip-filtro.ativo, .chip-filtro:hover {
+    background: var(--cor-principal);
+    color: #ffffff;
+    border-color: var(--cor-principal);
+    box-shadow: 0 4px 12px rgba(185, 45, 59, 0.25);
+  }
+
+  /* BLOCOS DE CONTEÚDO */
+  .bloco-card {
+    background: var(--cor-card);
+    border-radius: var(--raio);
+    padding: 22px;
+    box-shadow: var(--sombra);
+    border: 1px solid #e2e8f0;
+    transition: transform 0.2s ease;
+  }
+
+  .bloco-cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .bloco-titulo {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--cor-principal);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .horario-tag {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--cor-principal);
+    background: var(--cor-badge-vermelha-bg);
+    padding: 4px 10px;
+    border-radius: 8px;
+  }
+
+  /* CARTÕES DE REFEIÇÃO ESTILO IFOOD */
+  .prato-card {
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .prato-card:last-child { margin-bottom: 0; }
+
+  .prato-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .prato-nome {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--cor-texto);
+  }
+
+  .prato-desc {
+    font-size: 14px;
+    color: var(--cor-texto-suave);
+  }
+
+  .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .tag {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .tag-veggie { background: var(--cor-veggie-bg); color: var(--cor-veggie-txt); }
+  .tag-alerta { background: var(--cor-alerta-bg); color: var(--cor-alerta-txt); }
+
+  /* VOTAÇÃO */
+  .lista-votacao {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .item-voto {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    gap: 10px;
+  }
+
+  .info-voto strong { font-size: 15px; display: block; color: var(--cor-texto); }
+  .info-voto span { font-size: 13px; color: var(--cor-principal); font-weight: 700; }
+
+  .btn-votar {
+    min-height: 44px;
+    min-width: 100px;
+    padding: 0 18px;
+    font-size: 14px;
+    font-weight: 800;
+    background-color: var(--cor-principal);
+    color: #ffffff;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(185, 45, 59, 0.2);
+    transition: background-color 0.2s, transform 0.1s;
+  }
+
+  .btn-votar:hover { background-color: var(--cor-principal-hover); transform: scale(1.02); }
+  .btn-votar:disabled { background-color: #cbd5e1; color: #64748b; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* MURAL DE SUGESTÕES */
+  .form-sugestao {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .campo-texto {
+    width: 100%;
+    min-height: 85px;
+    padding: 12px;
+    font-size: 15px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 12px;
+    font-family: inherit;
+    resize: vertical;
+    background: #ffffff;
+  }
+
+  .campo-texto:focus { outline: none; border-color: var(--cor-principal); box-shadow: 0 0 0 3px rgba(185, 45, 59, 0.15); }
+
+  .btn-enviar {
+    min-height: 46px;
+    padding: 0 24px;
+    font-size: 15px;
+    font-weight: 800;
+    background-color: var(--cor-destaque);
+    color: #ffffff;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    align-self: flex-end;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 3px 10px rgba(217, 119, 6, 0.25);
+  }
+
+  .btn-enviar:hover { background-color: var(--cor-destaque-hover); transform: scale(1.02); }
+
+  .mural-lista { display: flex; flex-direction: column; gap: 10px; }
+
+  .cartao-sugestao {
+    background: #f8fafc;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    border-left: 4px solid var(--cor-principal);
+  }
+
+  /* CAIXA DE NOTIFICAÇÃO TOAST */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #1e293b;
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+  }
+
+  #toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-banner">
+      <div class="logo-area">
+        <span class="logo-icon">🥗</span>
+        <div>
+          <div class="logo-titulo">Sabores da Escola</div>
+          <div class="badge-escola">Cardápio do Dia • Cantina Central</div>
+        </div>
+      </div>
+      <span class="status-badge">● Aberto</span>
+    </div>
+
+    <!-- ABAS / FILTROS DE REFEIÇÃO -->
+    <div class="filtros-scroll">
+      <button class="chip-filtro ativo" onclick="filtrar('todos', this)">🍽️ Ver Todos</button>
+      <button class="chip-filtro" onclick="filtrar('cafe-manha', this)">☕ Café da Manhã</button>
+      <button class="chip-filtro" onclick="filtrar('almoco', this)">🍲 Almoço</button>
+      <button class="chip-filtro" onclick="filtrar('cafe-tarde', this)">🥐 Café da Tarde</button>
+    </div>
+  </header>
+
+  <!-- REFEIÇÃO 1: CAFÉ DA MANHÃ -->
+  <section class="bloco-card secao-refeicao" id="secao-cafe-manha">
+    <div class="bloco-cabecalho">
+      <div class="bloco-titulo">☕ Café da Manhã</div>
+      <span class="horario-tag">07:00 - 09:00</span>
+    </div>
+
+    <div class="prato-card">
+      <div class="prato-topo">
+        <div class="prato-nome">Cuscuz quentinho com Ovos Mexidos ou Queijo</div>
+      </div>
+      <div class="prato-desc">Acompanha café com leite, chá de hortelã ou suco de laranja natural.</div>
+      <div class="tags-container">
+        <span class="tag tag-veggie">🌱 Opção Veggie: Cuscuz com Tofu temperado</span>
+        <span class="tag tag-alerta">🥛 Contém Lactose</span>
+      </div>
+    </div>
+
+    <div class="prato-card">
+      <div class="prato-topo">
+        <div class="prato-nome">Pão na Chapa com Requeijão & Fruta Fresca</div>
+      </div>
+      <div class="prato-desc">Pão francês crocante na chapa e porção de mamão fatiado.</div>
+      <div class="tags-container">
+        <span class="tag tag-alerta">🌾 Contém Glúten</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- REFEIÇÃO 2: ALMOÇO -->
+  <section class="bloco-card secao-refeicao" id="secao-almoco">
+    <div class="bloco-cabecalho">
+      <div class="bloco-titulo">🍲 Almoço (Prato Principal)</div>
+      <span class="horario-tag">11:30 - 13:30</span>
+    </div>
+
+    <div class="prato-card">
+      <div class="prato-topo">
+        <div class="prato-nome">Strogonoff de Frango Especial</div>
+      </div>
+      <div class="prato-desc">Acompanha arroz soltinho, feijão fresquinho e batata palha crocante.</div>
+      <div class="tags-container">
+        <span class="tag tag-veggie">🌱 Opção Veggie: Strogonoff de Cogumelos</span>
+        <span class="tag tag-alerta">🥛 Contém Lactose</span>
+        <span class="tag tag-alerta">🌾 Contém Glúten</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- REFEIÇÃO 3: CAFÉ DA TARDE -->
+  <section class="bloco-card secao-refeicao" id="secao-cafe-tarde">
+    <div class="bloco-cabecalho">
+      <div class="bloco-titulo">🥐 Café da Tarde</div>
+      <span class="horario-tag">15:00 - 16:30</span>
+    </div>
+
+    <div class="prato-card">
+      <div class="prato-topo">
+        <div class="prato-nome">Bolo de Cenoura com Cobertura de Chocolate</div>
+      </div>
+      <div class="prato-desc">Fatia de bolo caseiro macio acompanhado de suco de maracujá gelado.</div>
+      <div class="tags-container">
+        <span class="tag tag-veggie">🌱 Opção Sem Lactose: Bolo de Laranja</span>
+        <span class="tag tag-alerta">🌾 Contém Glúten</span>
+      </div>
+    </div>
+
+    <div class="prato-card">
+      <div class="prato-topo">
+        <div class="prato-nome">Pão de Queijo Assado na Hora</div>
+      </div>
+      <div class="prato-desc">Porção com 4 unidades quentinhas e suco ou achocolatado.</div>
+      <div class="tags-container">
+        <span class="tag tag-alerta">🥛 Contém Lactose</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOCO VOTAÇÃO DA GALERA -->
+  <section class="bloco-card">
+    <div class="bloco-titulo" style="margin-bottom: 8px;">🗳️ Votação: Prato Especial da Próxima Sexta</div>
+    <p style="margin-bottom: 14px; font-size: 14px; color: var(--cor-texto-suave);">Qual refeição você quer ver no cardápio na próxima semana?</p>
+    
+    <div class="lista-votacao">
+      <div class="item-voto">
+        <div class="info-voto">
+          <strong>Feijoada Completa com Couve</strong>
+          <span id="votos-1">42 votos</span>
+        </div>
+        <button class="btn-votar" onclick="votar(1)">Votar</button>
+      </div>
+
+      <div class="item-voto">
+        <div class="info-voto">
+          <strong>Lasanha de Queijo e Presunto</strong>
+          <span id="votos-2">58 votos</span>
+        </div>
+        <button class="btn-votar" onclick="votar(2)">Votar</button>
+      </div>
+
+      <div class="item-voto">
+        <div class="info-voto">
+          <strong>Hambúrguer Artesanal com Batata</strong>
+          <span id="votos-3">89 votos</span>
+        </div>
+        <button class="btn-votar" onclick="votar(3)">Votar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOCO MURAL DE SUGESTÕES -->
+  <section class="bloco-card">
+    <div class="bloco-titulo" style="margin-bottom: 8px;">💡 Mural de Sugestões</div>
+    <p style="margin-bottom: 12px; font-size: 14px; color: var(--cor-texto-suave);">Qual receita você gostaria de ver no café ou almoço?</p>
+    
+    <form class="form-sugestao" onsubmit="enviarSugestao(event)">
+      <textarea id="input-sugestao" class="campo-texto" placeholder="Ex.: Vitamina de banana no café, Salada de frutas..." required></textarea>
+      <button type="submit" class="btn-enviar">Enviar Ideia</button>
+    </form>
+
+    <div class="mural-lista" id="mural-sugestoes">
+      <div class="cartao-sugestao">"Poderia ter tapioca recheada no café da manhã!" — <em>Lucas (8º ano)</em></div>
+      <div class="cartao-sugestao">"Adorei o bolo de cenoura do lanche da tarde." — <em>Profª Marina</em></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- TOAST PARA MENSAGENS AMIGÁVEIS -->
+<div id="toast">
+  <span id="toast-icon">✨</span>
+  <span id="toast-msg">Mensagem enviada</span>
+</div>
+
+<script>
+  // Filtro de refeições
+  function filtrar(categoria, elemento) {
+    document.querySelectorAll('.chip-filtro').forEach(btn => btn.classList.remove('ativo'));
+    elemento.classList.add('ativo');
+
+    const secoes = document.querySelectorAll('.secao-refeicao');
+    secoes.forEach(secao => {
+      if (categoria === 'todos') {
+        secao.style.display = 'block';
+      } else {
+        secao.style.display = (secao.id === `secao-${categoria}`) ? 'block' : 'none';
+      }
+    });
+  }
+
+  // Notificação Toast
+  function mostrarToast(mensagem, icone = '✅') {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = mensagem;
+    document.getElementById('toast-icon').textContent = icone;
+    
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000);
+  }
+
+  // Votação
+  let votou = false;
+  const contagem = { 1: 42, 2: 58, 3: 89 };
+
+  function votar(opcao) {
+    if (votou) return;
+    contagem[opcao]++;
+    document.getElementById(`votos-${opcao}`).textContent = `${contagem[opcao]} votos`;
+    
+    document.querySelectorAll('.btn-votar').forEach(btn => {
+      btn.disabled = true;
+      btn.textContent = 'Votado!';
+    });
+    
+    mostrarToast('Seu voto foi registrado com sucesso!', '🎉');
+    votou = true;
+  }
+
+  // Mural de Sugestões
+  function enviarSugestao(event) {
+    event.preventDefault();
+    const input = document.getElementById('input-sugestao');
+    const texto = input.value.trim();
+    
+    if (texto) {
+      const mural = document.getElementById('mural-sugestoes');
+      const novoCartao = document.createElement('div');
+      novoCartao.className = 'cartao-sugestao';
+      novoCartao.innerHTML = `"${texto}" — <em>Enviado agora mesmo</em>`;
+      
+      mural.prepend(novoCartao);
+      input.value = '';
+      mostrarToast('Sua sugestão foi enviada para a cantina!', '💡');
+    }
+  }
+</script>
+
+</body>
+</html>
